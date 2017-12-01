@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "2938235088",
+    "firebase_url": "https://routina-130c5.firebaseio.com",
+    "project_id": "routina-130c5",
+    "storage_bucket": "routina-130c5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2938235088:android:138bf8e53ad654dc",
+        "android_client_info": {
+          "package_name": "itp341.klecan.casey.routina"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2938235088-furts48pfh7nf3viji1eb9ot77ctvj36.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "itp341.klecan.casey.routina",
+            "certificate_hash": "f79031d1675cb5befe43e719b20560de7a974b2a"
+          }
+        },
+        {
+          "client_id": "2938235088-32hen2a9juv2an9471llo5de0khd14fa.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDc8_3Mf2oDAZYSxuC-Kp-FxedeWuaV2rM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2938235088-32hen2a9juv2an9471llo5de0khd14fa.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

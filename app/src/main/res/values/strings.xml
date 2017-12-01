@@ -1,0 +1,43 @@
+<resources>
+    <string name="app_name">Routina</string>
+    <string name="tag_line">with a little guidance from me, you\'ll have your routines down in no time!</string>
+
+    <string name="label_list">My Routines</string>
+    <string name="label_edit">Edit</string>
+    <string name="label_add">+</string>
+
+    <string name="label_create_routine">Create Routine</string>
+    <string name="label_save">Save</string>
+    <string name="label_name">Name: </string>
+    <string name="label_start">Start Time: </string>
+    <string name="label_days">Days: </string>
+    <string name="label_tasks">Tasks: </string>
+    <string name="label_add_task">Add a Task</string>
+
+    <string name="label_time_needed">Time: </string>
+    <string name="label_time_snooze">Snooze: </string>
+
+    <string name="label_done">Done!</string>
+    <string name="label_snooze">Snooze</string>
+
+    <string name="time_remaining_minutes">You have %1$s minutes to finish!</string>
+    <string name="time_remaining_seconds">You have %1$d seconds left!</string>
+
+    <string name="sun">Sunday</string>
+    <string name="mon">Monday</string>
+    <string name="tue">Tuesday</string>
+    <string name="wed">Wednesday</string>
+    <string name="thu">Thursday</string>
+    <string name="fri">Friday</string>
+    <string name="sat">Saturday</string>
+
+    <string name="routine_name_hint">routine name here</string>
+    <string name="task_name_hint">task name here</string>
+    <string name="start_time_hint">8:00am</string>
+    <string name="time_hint">4 minutes</string>
+    <string name="snooze_hint">30 seconds</string>
+    <string name="com.optimizely.api_key" translatable="false"> 18527966de2c666f43d698f67460f7982101a120b9049538631956f7144dc527:Kyxqekg6B</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

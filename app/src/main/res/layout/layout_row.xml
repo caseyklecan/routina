@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="8dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_routine_name"
+        android:text="Placeholder for name"
+        android:textColor="@color/colorDark"
+        android:textSize="@dimen/fontLarge"
+        android:layout_margin="@dimen/marginBetween"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_routine_days"
+        android:text="Placeholder for days"
+        android:textSize="@dimen/fontReg"
+        android:layout_margin="@dimen/marginBetween"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_routine_start_time"
+        android:text="Placeholder for start time"
+        android:textSize="@dimen/fontReg"
+        android:layout_margin="@dimen/marginBetween"/>
+
+</LinearLayout>
