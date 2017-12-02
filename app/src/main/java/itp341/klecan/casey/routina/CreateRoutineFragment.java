@@ -38,12 +38,24 @@ public class CreateRoutineFragment extends Fragment {
     private String routineMinute;
     private String routineAM_PM;
 
+    private Routine current;
+
+    private static final String ARG_ROUTINE = "routina.create_routine.routine_to_edit";
+
     public CreateRoutineFragment() {
         // Required empty public constructor
     }
 
     public static CreateRoutineFragment newInstance() {
         CreateRoutineFragment fragment = new CreateRoutineFragment();
+        return fragment;
+    }
+
+    public static CreateRoutineFragment newInstance(Routine routine) {
+        CreateRoutineFragment fragment = new CreateRoutineFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(ARG_ROUTINE, routine);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -90,6 +102,16 @@ public class CreateRoutineFragment extends Fragment {
         fri = (CheckBox) v.findViewById(R.id.checkbox_fri);
         sat = (CheckBox) v.findViewById(R.id.checkbox_sat);
 
+        if (getArguments() == null) {
+            // new routine
+
+        } else {
+            // edit routine
+            current = (Routine) getArguments().getSerializable(ARG_ROUTINE);
+            editName.setText(current.getName());
+            // todo populate time, days, task list
+        }
+
         return v;
     }
 
@@ -125,8 +147,15 @@ public class CreateRoutineFragment extends Fragment {
 
         Routine newRoutine = new Routine(name, time, days, new ArrayList<Task>());
         DatabaseReference user = ((MainActivity) getActivity()).getReferenceToCurrentUser();
-        DatabaseReference ref = user.push();
-        ref.setValue(newRoutine);
+        if (current == null) {
+            // new routine, need to add to database
+            DatabaseReference ref = user.push();
+            ref.setValue(newRoutine);
+        } else {
+            // existing routine, need to update in the database
+            // todo
+        }
+
     }
 
 }

@@ -1,9 +1,12 @@
 package itp341.klecan.casey.routina;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.FrameLayout;
@@ -104,5 +107,16 @@ public class MainActivity extends AppCompatActivity {
     // Gets the Firebase reference to the current user's node.
     public DatabaseReference getReferenceToCurrentUser() {
         return user;
+    }
+
+    public void sendNotification(String title, String content) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(getApplicationContext())
+                        .setSmallIcon(R.drawable.cat_happy)
+                        .setContentTitle(title)
+                        .setContentText(content);
+
+        notificationManager.notify(145, mBuilder.build());
     }
 }
