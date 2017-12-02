@@ -41,7 +41,7 @@ public class FinishRoutineFragment extends Fragment {
         buttonDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE);
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, null);
             }
         });
 

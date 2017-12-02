@@ -53,7 +53,7 @@ public class CreateTaskFragment extends Fragment {
                 // todo save to routine's task list
 
                 // todo go back to create routine page
-                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_CREATE_ROUTINE);
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_CREATE_ROUTINE, null);
             }
         });
 

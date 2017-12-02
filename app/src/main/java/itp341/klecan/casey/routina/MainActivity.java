@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void goToFragment(int fragId) {
+    public void goToFragment(int fragId, Routine routine) {
         Fragment frag = MyRoutineFragment.newInstance();
 
         switch (fragId) {
@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 frag = CreateTaskFragment.newInstance();
                 break;
             case FRAG_VIEW_ROUTINE: // view routine fragment
-                frag = ViewRoutineFragment.newInstance(new Routine());
+                frag = ViewRoutineFragment.newInstance(routine);
                 break;
             case FRAG_RUN_ROUTINE: // run routine fragment
                 frag = RunRoutineFragment.newInstance();

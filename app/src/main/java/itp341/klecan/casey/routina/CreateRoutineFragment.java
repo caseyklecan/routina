@@ -78,7 +78,7 @@ public class CreateRoutineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 saveRoutine();
-                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE);
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, null);
             }
         });
 

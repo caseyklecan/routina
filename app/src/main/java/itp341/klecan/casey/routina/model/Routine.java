@@ -17,8 +17,8 @@ public class Routine implements Serializable {
 
     private String name;
     private String startTime;
-    private Map<String, Boolean> daysOn;
-    private List<Task> taskList;
+    private HashMap<String, Boolean> daysOn;
+    private ArrayList<Task> taskList;
 
     public Routine() {
         this.name = "";
@@ -54,7 +54,7 @@ public class Routine implements Serializable {
         this.startTime = startTime;
     }
 
-    public Map<String, Boolean> getDaysOn() {
+    public HashMap<String, Boolean> getDaysOn() {
         return daysOn;
     }
 
@@ -62,7 +62,7 @@ public class Routine implements Serializable {
         this.daysOn = daysOn;
     }
 
-    public List<Task> getTaskList() {
+    public ArrayList<Task> getTaskList() {
         return taskList;
     }
 
