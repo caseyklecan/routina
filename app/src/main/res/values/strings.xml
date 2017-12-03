@@ -4,6 +4,7 @@
 
     <string name="label_list">My Routines</string>
     <string name="label_edit">Edit</string>
+    <string name="label_delete">Delete</string>
     <string name="label_add">+</string>
 
     <string name="label_create_routine">Create Routine</string>

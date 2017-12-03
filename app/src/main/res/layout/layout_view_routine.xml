@@ -42,14 +42,33 @@
 
     </ListView>
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:id="@+id/button_edit_routine"
-        android:text="@string/label_edit"
-        android:theme="@style/ButtonStyle"
-        android:textColor="@color/colorTeal"
-        android:contentDescription="@string/label_save"/>
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:id="@+id/button_edit_routine"
+            android:text="@string/label_edit"
+            android:theme="@style/ButtonStyle"
+            android:textColor="@color/colorTeal"
+            android:contentDescription="@string/label_edit"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:id="@+id/button_delete_routine"
+            android:text="@string/label_delete"
+            android:theme="@style/ButtonStyle"
+            android:textColor="@color/colorTeal"
+            android:contentDescription="@string/label_delete"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
 
 </LinearLayout>

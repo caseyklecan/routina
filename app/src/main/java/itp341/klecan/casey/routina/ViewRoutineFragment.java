@@ -34,7 +34,8 @@ public class ViewRoutineFragment extends Fragment {
     private TextView textStart;
     private ListView listTasks;
 
-    public Button editButton;
+    private Button editButton;
+    private Button deleteButton;
 
     private Routine currentRoutine;
 
@@ -66,7 +67,6 @@ public class ViewRoutineFragment extends Fragment {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         String url = getArguments().getString(ARG_ROUTINE);
         dbRoutine = db.getReferenceFromUrl(url);
-        Log.d("VIEW ROUTINE", url);
         final Routine routine = new Routine();
 
         dbRoutine.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -77,7 +77,7 @@ public class ViewRoutineFragment extends Fragment {
                 routine.setName(r.getName());
                 routine.setStartTime(r.getStartTime());
                 routine.setTaskList(r.getTaskList());
-                if (r == null) Log.d("VIEW ROUTINE", "ROUTINE r NULL");
+
                 currentRoutine = routine;
                 textName = (TextView) v.findViewById(R.id.text_routine_name);
                 textDays = (TextView) v.findViewById(R.id.text_routine_days);
@@ -130,14 +130,21 @@ public class ViewRoutineFragment extends Fragment {
         });
 
         currentRoutine = routine;
-        if (currentRoutine == null) Log.d("VIEW ROUTINE", "ROUTINE NULL");
-
 
         editButton = (Button) v.findViewById(R.id.button_edit_routine);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_EDIT_ROUTINE, dbRoutine.toString());
+            }
+        });
+
+        deleteButton = (Button) v.findViewById(R.id.button_delete_routine);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dbRoutine.removeValue();
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
             }
         });
 
