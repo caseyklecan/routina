@@ -51,6 +51,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:id="@+id/button_run_routine"
+            android:text="@string/label_run"
+            android:theme="@style/ButtonStyle"
+            android:textColor="@color/colorTeal"
+            android:contentDescription="@string/label_run"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
             android:id="@+id/button_edit_routine"
             android:text="@string/label_edit"
             android:theme="@style/ButtonStyle"

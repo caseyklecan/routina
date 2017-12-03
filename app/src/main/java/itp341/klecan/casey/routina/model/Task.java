@@ -14,6 +14,9 @@ public class Task implements Serializable {
     private Duration time;
     private Duration snooze;
 
+    private int snoozeCount;
+    private int earlyFinishCount;
+
     public Task() {
         this.name = "";
     }
@@ -22,6 +25,8 @@ public class Task implements Serializable {
         this.name = name;
         this.time = time;
         this.snooze = snooze;
+        snoozeCount = 0;
+        earlyFinishCount = 0;
     }
 
     public String getName() {
@@ -46,6 +51,22 @@ public class Task implements Serializable {
 
     public void setSnooze(Duration snooze) {
         this.snooze = snooze;
+    }
+
+    public int getSnoozeCount() {
+        return snoozeCount;
+    }
+
+    public int getEarlyFinishCount() {
+        return earlyFinishCount;
+    }
+
+    public void snooze() {
+        snoozeCount++;
+    }
+
+    public void finishEarly() {
+        earlyFinishCount++;
     }
 
     @Override

@@ -36,6 +36,7 @@ public class ViewRoutineFragment extends Fragment {
 
     private Button editButton;
     private Button deleteButton;
+    private Button runButton;
 
     private Routine currentRoutine;
 
@@ -65,7 +66,7 @@ public class ViewRoutineFragment extends Fragment {
         final View v = inflater.inflate(R.layout.layout_view_routine, null);
 
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        String url = getArguments().getString(ARG_ROUTINE);
+        final String url = getArguments().getString(ARG_ROUTINE);
         dbRoutine = db.getReferenceFromUrl(url);
         final Routine routine = new Routine();
 
@@ -145,6 +146,14 @@ public class ViewRoutineFragment extends Fragment {
             public void onClick(View view) {
                 dbRoutine.removeValue();
                 ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
+            }
+        });
+
+        runButton = (Button) v.findViewById(R.id.button_run_routine);
+        runButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_RUN_ROUTINE, url);
             }
         });
 

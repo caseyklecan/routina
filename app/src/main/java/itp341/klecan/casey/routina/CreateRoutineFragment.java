@@ -34,7 +34,9 @@ public class CreateRoutineFragment extends Fragment {
     private CheckBox thurs;
     private CheckBox fri;
     private CheckBox sat;
+
     // TODO task list
+
     private Button saveButton;
 
     private String routineName;
