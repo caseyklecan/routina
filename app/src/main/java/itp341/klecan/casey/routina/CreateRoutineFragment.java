@@ -11,7 +11,11 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,10 +41,11 @@ public class CreateRoutineFragment extends Fragment {
     private String routineHour;
     private String routineMinute;
     private String routineAM_PM;
+    private ArrayList<Task> routineTaskList;
 
-    private Routine current;
+    private DatabaseReference currentRef;
 
-    private static final String ARG_ROUTINE = "routina.create_routine.routine_to_edit";
+    private static final String ARG_ROUTINE = "routina.create_routine.routine_url";
 
     public CreateRoutineFragment() {
         // Required empty public constructor
@@ -51,10 +56,10 @@ public class CreateRoutineFragment extends Fragment {
         return fragment;
     }
 
-    public static CreateRoutineFragment newInstance(Routine routine) {
+    public static CreateRoutineFragment newInstance(String url) {
         CreateRoutineFragment fragment = new CreateRoutineFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_ROUTINE, routine);
+        args.putString(ARG_ROUTINE, url);
         fragment.setArguments(args);
         return fragment;
     }
@@ -104,13 +109,67 @@ public class CreateRoutineFragment extends Fragment {
 
         if (getArguments() == null) {
             // new routine
-
+            routineTaskList = new ArrayList<>();
         } else {
             // edit routine
-            current = (Routine) getArguments().getSerializable(ARG_ROUTINE);
-            editName.setText(current.getName());
-            // todo populate time, days, task list
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            String url = getArguments().getString(ARG_ROUTINE);
+            currentRef = db.getReferenceFromUrl(url);
+            currentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Routine r = dataSnapshot.getValue(Routine.class);
+
+                    editName.setText(r.getName());
+
+                    HashMap<String, Boolean> map = r.getDaysOn();
+                    if (map.get("Sunday")) {
+                        sun.setChecked(true);
+                    }
+                    if (map.get("Monday")) {
+                        mon.setChecked(true);
+                    }
+                    if (map.get("Tuesday")) {
+                        tues.setChecked(true);
+                    }
+                    if (map.get("Wednesday")) {
+                        wed.setChecked(true);
+                    }
+                    if (map.get("Thursday")) {
+                        thurs.setChecked(true);
+                    }
+                    if (map.get("Friday")) {
+                        fri.setChecked(true);
+                    }
+                    if (map.get("Saturday")) {
+                        sat.setChecked(true);
+                    }
+
+                    String time = r.getStartTime();
+                    int colonIndex = time.indexOf(':');
+                    int hour = Integer.valueOf(time.substring(0 , colonIndex));
+                    int minute = Integer.valueOf(time.substring(colonIndex + 1, colonIndex + 3));
+
+                    editTime.setHour(hour);
+                    editTime.setMinute(minute);
+
+                    routineTaskList = r.getTaskList();
+                    // todo set task list
+
+                    routineName = r.getName();
+                    // todo am / pm
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
         }
+
+        // todo task list & adapter
 
         return v;
     }
@@ -147,13 +206,13 @@ public class CreateRoutineFragment extends Fragment {
 
         Routine newRoutine = new Routine(name, time, days, new ArrayList<Task>());
         DatabaseReference user = ((MainActivity) getActivity()).getReferenceToCurrentUser();
-        if (current == null) {
+        if (currentRef == null) {
             // new routine, need to add to database
             DatabaseReference ref = user.push();
             ref.setValue(newRoutine);
         } else {
             // existing routine, need to update in the database
-            // todo
+            currentRef.setValue(newRoutine);
         }
 
     }

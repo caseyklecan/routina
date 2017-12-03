@@ -22,6 +22,9 @@ public class Routine implements Serializable {
 
     public Routine() {
         this.name = "";
+        this.startTime = "";
+        this.daysOn = getEmptyDays();
+        this.taskList = new ArrayList<>();
     }
 
     public Routine(String name, String startTime) {

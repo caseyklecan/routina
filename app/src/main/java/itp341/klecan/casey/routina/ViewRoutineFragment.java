@@ -9,11 +9,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 
@@ -29,6 +34,8 @@ public class ViewRoutineFragment extends Fragment {
     private TextView textStart;
     private ListView listTasks;
 
+    public Button editButton;
+
     private Routine currentRoutine;
 
     private DatabaseReference dbRoutine;
@@ -38,10 +45,10 @@ public class ViewRoutineFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static ViewRoutineFragment newInstance(Routine routine) {
+    public static ViewRoutineFragment newInstance(String url) {
         ViewRoutineFragment fragment = new ViewRoutineFragment();
         Bundle args = new Bundle();
-        args.putSerializable(ARG_ROUTINE, routine);
+        args.putString(ARG_ROUTINE, url);
         fragment.setArguments(args);
         return fragment;
     }
@@ -54,54 +61,85 @@ public class ViewRoutineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.layout_view_routine, null);
+        final View v = inflater.inflate(R.layout.layout_view_routine, null);
 
-        if (getArguments() == null) Log.d("VIEW ROUTINE", "ARGS NULL");
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        String url = getArguments().getString(ARG_ROUTINE);
+        dbRoutine = db.getReferenceFromUrl(url);
+        Log.d("VIEW ROUTINE", url);
+        final Routine routine = new Routine();
 
-        currentRoutine = (Routine) getArguments().getSerializable(ARG_ROUTINE);
-
-        textName = (TextView) v.findViewById(R.id.text_routine_name);
-        textDays = (TextView) v.findViewById(R.id.text_routine_days);
-        textStart = (TextView) v.findViewById(R.id.text_routine_start_time);
-        listTasks = (ListView) v.findViewById(R.id.list_tasks);
-
-//        adapter = new TaskAdapter(getActivity(), Task.class, R.layout.layout_row, dbRoutine);
-//        listTasks.setAdapter(adapter);
-        listTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        dbRoutine.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                // todo
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Routine r = dataSnapshot.getValue(Routine.class);
+                routine.setDaysOn(r.getDaysOn());
+                routine.setName(r.getName());
+                routine.setStartTime(r.getStartTime());
+                routine.setTaskList(r.getTaskList());
+                if (r == null) Log.d("VIEW ROUTINE", "ROUTINE r NULL");
+                currentRoutine = routine;
+                textName = (TextView) v.findViewById(R.id.text_routine_name);
+                textDays = (TextView) v.findViewById(R.id.text_routine_days);
+                textStart = (TextView) v.findViewById(R.id.text_routine_start_time);
+                listTasks = (ListView) v.findViewById(R.id.list_tasks);
+
+                //        adapter = new TaskAdapter(getActivity(), Task.class, R.layout.layout_row, dbRoutine);
+                //        listTasks.setAdapter(adapter);
+                listTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        // todo
+                    }
+                });
+
+                textName.setText(currentRoutine.getName());
+                textStart.setText(currentRoutine.getStartTime());
+
+                HashMap<String, Boolean> map = currentRoutine.getDaysOn();
+                String daysText = "";
+
+                if (map.get("Sunday")) {
+                    daysText += "Su ";
+                }
+                if (map.get("Monday")) {
+                    daysText += "Mo ";
+                }
+                if (map.get("Tuesday")) {
+                    daysText += "Tu ";
+                }
+                if (map.get("Wednesday")) {
+                    daysText += "We ";
+                }
+                if (map.get("Thursday")) {
+                    daysText += "Th ";
+                }
+                if (map.get("Friday")) {
+                    daysText += "Fr ";
+                }
+                if (map.get("Saturday")) {
+                    daysText += "Sa ";
+                }
+                textDays.setText(daysText);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
             }
         });
 
-        textName.setText(currentRoutine.getName());
-        textStart.setText(currentRoutine.getStartTime());
+        currentRoutine = routine;
+        if (currentRoutine == null) Log.d("VIEW ROUTINE", "ROUTINE NULL");
 
-        HashMap<String, Boolean> map = currentRoutine.getDaysOn();
-        String daysText = "";
 
-        if (map.get("Sunday")) {
-            daysText += "Su ";
-        }
-        if (map.get("Monday")) {
-            daysText += "Mo ";
-        }
-        if (map.get("Tuesday")) {
-            daysText += "Tu ";
-        }
-        if (map.get("Wednesday")) {
-            daysText += "We ";
-        }
-        if (map.get("Thursday")) {
-            daysText += "Th ";
-        }
-        if (map.get("Friday")) {
-            daysText += "Fr ";
-        }
-        if (map.get("Saturday")) {
-            daysText += "Sa ";
-        }
-        textDays.setText(daysText);
+        editButton = (Button) v.findViewById(R.id.button_edit_routine);
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_EDIT_ROUTINE, dbRoutine.toString());
+            }
+        });
 
         return v;
     }

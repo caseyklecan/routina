@@ -30,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int FRAG_VIEW_ROUTINE = 3;
     public static final int FRAG_RUN_ROUTINE = 4;
     public static final int FRAG_FINISH_ROUTINE = 5;
+    public static final int FRAG_EDIT_ROUTINE = 6;
 
     private FrameLayout contentFrame;
 
@@ -75,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void goToFragment(int fragId, Routine routine) {
+    public void goToFragment(int fragId, String routine) {
         Fragment frag = MyRoutineFragment.newInstance();
 
         switch (fragId) {
@@ -95,6 +96,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case FRAG_FINISH_ROUTINE: // finish routine fragment
                 frag = FinishRoutineFragment.newInstance();
+                break;
+            case FRAG_EDIT_ROUTINE: // create routine fragment w data
+                frag = CreateRoutineFragment.newInstance(routine);
                 break;
         }
 

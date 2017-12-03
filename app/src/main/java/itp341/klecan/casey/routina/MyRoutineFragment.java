@@ -64,8 +64,8 @@ public class MyRoutineFragment extends Fragment {
         routineList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Routine chosen = (Routine) adapterView.getItemAtPosition(i);
-                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_VIEW_ROUTINE, chosen);
+                DatabaseReference dbClicked = adapter.getRef(i);
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_VIEW_ROUTINE, dbClicked.toString());
             }
         });
 
