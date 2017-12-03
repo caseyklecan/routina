@@ -16,6 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.optimizely.Optimizely;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -176,7 +177,7 @@ public class CreateRoutineFragment extends Fragment {
         return v;
     }
 
-    // saves the current routine in firebase (as if it's a new routine)
+    // saves the current routine in firebase (if it's new, creates it, else updates it)
     private void saveRoutine() {
         String name = editName.getText().toString();
         String time = routineHour + ":" + routineMinute + " " + routineAM_PM;
@@ -216,7 +217,17 @@ public class CreateRoutineFragment extends Fragment {
             // existing routine, need to update in the database
             currentRef.setValue(newRoutine);
         }
+        startCheckout(getView());
 
     }
+
+    public void startCheckout(View view) {
+        if (currentRef == null) {
+            Optimizely.trackEvent("create_new_routine");
+        } else {
+            Optimizely.trackEvent("update_routine");
+        }
+    }
+
 
 }

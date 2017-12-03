@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.FrameLayout;
 
 import com.crashlytics.android.Crashlytics;
@@ -39,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Optimizely.startOptimizelyWithAPIToken(getString(R.string.com_optimizely_api_key), getApplication());
+        Optimizely.startOptimizelyWithAPIToken("AANm0IcB-fiDA1sA0YiNHbcHXXfEPx_j~9435701948", getApplication());
+
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         String id = Settings.Secure.getString(getContentResolver(),Settings.Secure.ANDROID_ID);
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         final DatabaseReference ref = db.getReference(id);
+        logUser(id);
 
         // check to see if user is already in database, if not make sure their data sticks
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -102,10 +105,23 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
+
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.replace(R.id.content_frame, frag).addToBackStack("myRoutine").commit();
+    }
+
+    private void logUser(String id) {
+        // TODO: Use the current user's information
+        // You can call any combination of these three methods
+        Crashlytics.setUserIdentifier(id);
+        Crashlytics.setUserEmail("user@fabric.io");
+        Crashlytics.setUserName("Test User");
+    }
+
+    public void forceCrash(View view) {
+        throw new RuntimeException("This is a crash");
     }
 
     // Gets the Firebase reference to the current user's node.
