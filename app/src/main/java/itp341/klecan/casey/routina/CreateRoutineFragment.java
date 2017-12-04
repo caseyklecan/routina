@@ -4,6 +4,7 @@ package itp341.klecan.casey.routina;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +53,8 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
     private String routineMinute;
     private String routineAM_PM;
     private ArrayList<Task> routineTaskList;
+
+    private int editIndex = -1;
 
     private DatabaseReference routine;
     private DatabaseReference tasks;
@@ -193,7 +196,9 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    // todo open add task dialog w modifications
+                    editIndex = i;
+                    Task t = (Task) adapterView.getItemAtPosition(i);
+                    showAddTaskDialog(t);
                 }
             });
 
@@ -271,31 +276,30 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         dialog.show(getFragmentManager(), "AddTaskDialog");
     }
 
+    private void showAddTaskDialog(Task toEdit) {
+        AddTaskDialog dialog = AddTaskDialog.newInstance(toEdit);
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "AddTaskDialog");
+    }
+
     @Override
     public void saveTask(Task t) {
         if (routineTaskList == null) {
             routineTaskList = new ArrayList<>();
         }
-        routineTaskList.add(t);
+        if (editIndex < 0) {
+            routineTaskList.add(t);
+        } else {
+            routineTaskList.set(editIndex, t);
+            editIndex = -1;
+        }
         tasks.setValue(routineTaskList);
     }
 
-
-    private class TaskAdapter extends FirebaseListAdapter<Task> {
-
-        public TaskAdapter(Activity activity, Class<Task> modelClass, int modelLayout, DatabaseReference ref) {
-            super(activity, modelClass, modelLayout, ref);
-        }
-
-        @Override
-        protected void populateView(View v, Task model, int position) {
-            TextView name = (TextView) v.findViewById(R.id.text_routine_name);
-            TextView time = (TextView) v.findViewById(R.id.text_routine_days);
-            TextView snooze = (TextView) v.findViewById(R.id.text_routine_start_time);
-
-            name.setText(model.getName());
-            time.setText("Time: " + model.getTime() + " minutes");
-            snooze.setText("Snooze: " + model.getSnooze() + " minutes");
-        }
+    @Override
+    public void deleteTask(Task t) {
+        if (editIndex < 0) return;
+        routineTaskList.remove(editIndex);
+        tasks.setValue(routineTaskList);
     }
 }

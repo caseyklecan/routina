@@ -34,6 +34,15 @@
         android:textAlignment="center" />
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/label_tasks"
+        android:textColor="@color/colorDark"
+        android:textSize="@dimen/fontLarge"
+        android:layout_margin="@dimen/marginBetween"
+        android:textAlignment="center"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

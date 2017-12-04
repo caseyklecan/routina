@@ -40,6 +40,7 @@ public class ViewRoutineFragment extends Fragment {
     private Routine currentRoutine;
 
     private DatabaseReference dbRoutine;
+    private DatabaseReference dbTasks;
     private TaskAdapter adapter;
 
     public ViewRoutineFragment() {
@@ -67,6 +68,7 @@ public class ViewRoutineFragment extends Fragment {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         final String url = getArguments().getString(ARG_ROUTINE);
         dbRoutine = db.getReferenceFromUrl(url);
+        dbTasks = dbRoutine.child("taskList");
         final Routine routine = new Routine();
 
         dbRoutine.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -84,14 +86,8 @@ public class ViewRoutineFragment extends Fragment {
                 textStart = (TextView) v.findViewById(R.id.text_routine_start_time);
                 listTasks = (ListView) v.findViewById(R.id.list_tasks);
 
-                //        adapter = new TaskAdapter(getActivity(), Task.class, R.layout.layout_row, dbRoutine);
-                //        listTasks.setAdapter(adapter);
-                listTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        // todo
-                    }
-                });
+                adapter = new TaskAdapter(getActivity(), Task.class, R.layout.layout_row, dbTasks);
+                listTasks.setAdapter(adapter);
 
                 textName.setText(currentRoutine.getName());
                 textStart.setText(currentRoutine.getStartTime());
@@ -131,6 +127,7 @@ public class ViewRoutineFragment extends Fragment {
 
         currentRoutine = routine;
 
+
         editButton = (Button) v.findViewById(R.id.button_edit_routine);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -157,23 +154,6 @@ public class ViewRoutineFragment extends Fragment {
         });
 
         return v;
-    }
-
-    private class TaskAdapter extends FirebaseListAdapter<Task> {
-        public TaskAdapter(Activity activity, Class<Task> modelClass, int modelLayout, DatabaseReference ref) {
-            super(activity, modelClass, modelLayout, ref);
-        }
-
-        @Override
-        protected void populateView(View v, Task model, int position) {
-            TextView textTaskName = (TextView) v.findViewById(R.id.text_routine_name);
-            TextView textTime = (TextView) v.findViewById(R.id.text_routine_days);
-            TextView textSnooze = (TextView) v.findViewById(R.id.text_routine_start_time);
-
-            textTaskName.setText(model.getName());
-            textTime.setText(model.getTime().toString());
-            textSnooze.setText(model.getSnooze().toString());
-        }
     }
 
 }
