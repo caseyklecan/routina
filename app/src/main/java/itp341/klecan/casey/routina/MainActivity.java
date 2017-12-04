@@ -88,9 +88,6 @@ public class MainActivity extends AppCompatActivity {
             case FRAG_CREATE_ROUTINE: // create routine fragment
                 frag = CreateRoutineFragment.newInstance();
                 break;
-            case FRAG_CREATE_TASK: // create task fragment
-                frag = CreateTaskFragment.newInstance(routine);
-                break;
             case FRAG_VIEW_ROUTINE: // view routine fragment
                 frag = ViewRoutineFragment.newInstance(routine);
                 break;
@@ -105,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
@@ -113,8 +109,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logUser(String id) {
-        // TODO: Use the current user's information
-        // You can call any combination of these three methods
         Crashlytics.setUserIdentifier(id);
         Crashlytics.setUserEmail("user@fabric.io");
         Crashlytics.setUserName("Test User");
