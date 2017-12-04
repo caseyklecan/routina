@@ -15,9 +15,12 @@
     <string name="label_days">Days: </string>
     <string name="label_tasks">Tasks: </string>
     <string name="label_add_task">Add a Task</string>
+    <string name="label_cancel_routine">Cancel</string>
 
-    <string name="label_time_needed">Time: </string>
-    <string name="label_time_snooze">Snooze: </string>
+
+    <string name="label_task_name">Task Name Here</string>
+    <string name="label_time_needed">Time Needed in Minutes (e.g. 10)</string>
+    <string name="label_time_snooze">Snooze Time in Minutes (e.g. 2)</string>
 
     <string name="label_done">Done!</string>
     <string name="label_snooze">Snooze</string>

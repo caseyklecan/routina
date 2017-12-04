@@ -11,8 +11,8 @@ import javax.xml.datatype.Duration;
 public class Task implements Serializable {
 
     private String name;
-    private Duration time;
-    private Duration snooze;
+    private String time;
+    private String snooze;
 
     private int snoozeCount;
     private int earlyFinishCount;
@@ -21,7 +21,7 @@ public class Task implements Serializable {
         this.name = "";
     }
 
-    public Task(String name, Duration time, Duration snooze) {
+    public Task(String name, String time, String snooze) {
         this.name = name;
         this.time = time;
         this.snooze = snooze;
@@ -37,19 +37,19 @@ public class Task implements Serializable {
         this.name = name;
     }
 
-    public Duration getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Duration time) {
+    public void setTime(String time) {
         this.time = time;
     }
 
-    public Duration getSnooze() {
+    public String getSnooze() {
         return snooze;
     }
 
-    public void setSnooze(Duration snooze) {
+    public void setSnooze(String snooze) {
         this.snooze = snooze;
     }
 

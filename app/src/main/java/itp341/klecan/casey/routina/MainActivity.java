@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity {
                 frag = CreateRoutineFragment.newInstance();
                 break;
             case FRAG_CREATE_TASK: // create task fragment
-                frag = CreateTaskFragment.newInstance();
+                frag = CreateTaskFragment.newInstance(routine);
                 break;
             case FRAG_VIEW_ROUTINE: // view routine fragment
                 frag = ViewRoutineFragment.newInstance(routine);

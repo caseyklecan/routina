@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import itp341.klecan.casey.routina.RoutineConstants;
+
 /**
  * Created by caseyklecan on 11/13/17.
  */
@@ -17,12 +19,14 @@ public class Routine implements Serializable {
 
     private String name;
     private String startTime;
+    private String status;
     private HashMap<String, Boolean> daysOn;
     private ArrayList<Task> taskList;
 
     public Routine() {
         this.name = "";
         this.startTime = "";
+        this.status = RoutineConstants.STATUS_PENDING;
         this.daysOn = getEmptyDays();
         this.taskList = new ArrayList<>();
     }
@@ -30,6 +34,7 @@ public class Routine implements Serializable {
     public Routine(String name, String startTime) {
         this.name = name;
         this.startTime = startTime;
+        this.status = RoutineConstants.STATUS_PENDING;
         this.daysOn = getEmptyDays();
         this.taskList = new ArrayList<>();
     }
@@ -37,6 +42,7 @@ public class Routine implements Serializable {
         public Routine(String name, String startTime, HashMap<String, Boolean> daysOn, ArrayList<Task> taskList) {
         this.name = name;
         this.startTime = startTime;
+        this.status = RoutineConstants.STATUS_PENDING;
         this.daysOn = daysOn;
         this.taskList = taskList;
     }
@@ -79,6 +85,14 @@ public class Routine implements Serializable {
 
     public void removeTask(Task toRemove) {
         taskList.remove(toRemove);
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

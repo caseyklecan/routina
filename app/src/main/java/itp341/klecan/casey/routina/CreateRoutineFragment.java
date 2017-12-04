@@ -1,16 +1,21 @@
 package itp341.klecan.casey.routina;
 
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,7 +29,7 @@ import java.util.HashMap;
 import itp341.klecan.casey.routina.model.Routine;
 import itp341.klecan.casey.routina.model.Task;
 
-public class CreateRoutineFragment extends Fragment {
+public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyDialogCallback {
 
     private EditText editName;
     private TimePicker editTime;
@@ -36,9 +41,11 @@ public class CreateRoutineFragment extends Fragment {
     private CheckBox fri;
     private CheckBox sat;
 
-    // TODO task list
+    private ListView taskList;
+    private TaskAdapter adapter;
 
     private Button saveButton;
+    private Button addTaskButton;
 
     private String routineName;
     private String routineHour;
@@ -46,7 +53,8 @@ public class CreateRoutineFragment extends Fragment {
     private String routineAM_PM;
     private ArrayList<Task> routineTaskList;
 
-    private DatabaseReference currentRef;
+    private DatabaseReference routine;
+    private DatabaseReference tasks;
 
     private static final String ARG_ROUTINE = "routina.create_routine.routine_url";
 
@@ -102,6 +110,14 @@ public class CreateRoutineFragment extends Fragment {
             }
         });
 
+        addTaskButton = (Button) v.findViewById(R.id.button_add_task);
+        addTaskButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAddTaskDialog();
+            }
+        });
+
         sun = (CheckBox) v.findViewById(R.id.checkbox_sun);
         mon = (CheckBox) v.findViewById(R.id.checkbox_mon);
         tues = (CheckBox) v.findViewById(R.id.checkbox_tue);
@@ -117,8 +133,10 @@ public class CreateRoutineFragment extends Fragment {
             // edit routine
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             String url = getArguments().getString(ARG_ROUTINE);
-            currentRef = db.getReferenceFromUrl(url);
-            currentRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            routine = db.getReferenceFromUrl(url);
+            tasks = routine.child("taskList");
+
+            routine.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Routine r = dataSnapshot.getValue(Routine.class);
@@ -169,10 +187,17 @@ public class CreateRoutineFragment extends Fragment {
                 }
             });
 
+            adapter = new TaskAdapter(getActivity(), Task.class, R.layout.layout_row, tasks);
+            taskList = (ListView) v.findViewById(R.id.list_tasks);
+            taskList.setAdapter(adapter);
+            taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    // todo open add task dialog w modifications
+                }
+            });
 
         }
-
-        // todo task list & adapter
 
         return v;
     }
@@ -205,29 +230,72 @@ public class CreateRoutineFragment extends Fragment {
             days.put("Saturday", true);
         }
 
-        // todo add task functionality
+        if (routineTaskList == null) routineTaskList = new ArrayList<>();
 
-        Routine newRoutine = new Routine(name, time, days, new ArrayList<Task>());
+        Routine newRoutine = new Routine(name, time, days, routineTaskList);
+        newRoutine.setStatus(RoutineConstants.STATUS_CREATED);
+
         DatabaseReference user = ((MainActivity) getActivity()).getReferenceToCurrentUser();
-        if (currentRef == null) {
+        if (routine == null) {
             // new routine, need to add to database
             DatabaseReference ref = user.push();
             ref.setValue(newRoutine);
         } else {
             // existing routine, need to update in the database
-            currentRef.setValue(newRoutine);
+            routine.setValue(newRoutine);
         }
+
         startCheckout(getView());
 
     }
 
+    private void cancel() {
+        if (routine == null) {
+            // don't save
+        }
+        // else if routine isn't yet "created" delete it
+        // else just don't update it
+    }
+
     public void startCheckout(View view) {
-        if (currentRef == null) {
+        if (routine == null) {
             Optimizely.trackEvent("create_new_routine");
         } else {
             Optimizely.trackEvent("update_routine");
         }
     }
 
+    private void showAddTaskDialog() {
+        AddTaskDialog dialog = AddTaskDialog.newInstance();
+        dialog.setTargetFragment(this, 0);
+        dialog.show(getFragmentManager(), "AddTaskDialog");
+    }
 
+    @Override
+    public void saveTask(Task t) {
+        if (routineTaskList == null) {
+            routineTaskList = new ArrayList<>();
+        }
+        routineTaskList.add(t);
+        tasks.setValue(routineTaskList);
+    }
+
+
+    private class TaskAdapter extends FirebaseListAdapter<Task> {
+
+        public TaskAdapter(Activity activity, Class<Task> modelClass, int modelLayout, DatabaseReference ref) {
+            super(activity, modelClass, modelLayout, ref);
+        }
+
+        @Override
+        protected void populateView(View v, Task model, int position) {
+            TextView name = (TextView) v.findViewById(R.id.text_routine_name);
+            TextView time = (TextView) v.findViewById(R.id.text_routine_days);
+            TextView snooze = (TextView) v.findViewById(R.id.text_routine_start_time);
+
+            name.setText(model.getName());
+            time.setText("Time: " + model.getTime() + " minutes");
+            snooze.setText("Snooze: " + model.getSnooze() + " minutes");
+        }
+    }
 }

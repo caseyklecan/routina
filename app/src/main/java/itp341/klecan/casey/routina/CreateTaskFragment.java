@@ -10,6 +10,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class CreateTaskFragment extends Fragment {
 
     private EditText editName;
@@ -17,12 +20,19 @@ public class CreateTaskFragment extends Fragment {
     private EditText editSnooze;
     private Button buttonSave;
 
+    private DatabaseReference routine;
+
+    private static final String ARG_URL = "routina.create_task.routine_url";
+
     public CreateTaskFragment() {
         // Required empty public constructor
     }
 
-    public static CreateTaskFragment newInstance() {
+    public static CreateTaskFragment newInstance(String url) {
         CreateTaskFragment fragment = new CreateTaskFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_URL, url);
+        fragment.setArguments(args);
         return fragment;
     }
 
@@ -35,6 +45,10 @@ public class CreateTaskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.layout_create_task, null);
+
+        String url = getArguments().getString(ARG_URL);
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        routine = db.getReferenceFromUrl(url);
 
         editName = (EditText) v.findViewById(R.id.edit_task_name);
         editTime = (EditText) v.findViewById(R.id.edit_task_time);
@@ -58,6 +72,10 @@ public class CreateTaskFragment extends Fragment {
         });
 
         return v;
+    }
+
+    private void saveTask() {
+
     }
 
 }
