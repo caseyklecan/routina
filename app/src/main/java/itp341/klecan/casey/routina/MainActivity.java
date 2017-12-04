@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
     public static final int FRAG_MY_ROUTINE = 0;
     public static final int FRAG_CREATE_ROUTINE = 1;
-    public static final int FRAG_CREATE_TASK = 2;
     public static final int FRAG_VIEW_ROUTINE = 3;
     public static final int FRAG_RUN_ROUTINE = 4;
     public static final int FRAG_FINISH_ROUTINE = 5;
@@ -94,14 +93,20 @@ public class MainActivity extends AppCompatActivity {
             case FRAG_RUN_ROUTINE: // run routine fragment
                 frag = RunRoutineFragment.newInstance(routine);
                 break;
-            case FRAG_FINISH_ROUTINE: // finish routine fragment
-                frag = FinishRoutineFragment.newInstance();
-                break;
             case FRAG_EDIT_ROUTINE: // create routine fragment w data
                 frag = CreateRoutineFragment.newInstance(routine);
                 break;
         }
 
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction ft = fm.beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        ft.replace(R.id.content_frame, frag).addToBackStack("myRoutine").commit();
+    }
+
+    public void goToFragment(int fragId, String url, int int1, int int2) {
+        if (fragId != FRAG_FINISH_ROUTINE) return;
+        Fragment frag = FinishRoutineFragment.newInstance(url, int1, int2);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

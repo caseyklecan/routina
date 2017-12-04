@@ -68,7 +68,7 @@
             android:text="@string/label_snooze"
             android:theme="@style/ButtonStyle"
             android:textColor="@color/colorTeal"
-            android:contentDescription="@string/label_snooze"/>
+            android:contentDescription="@string/label_snooze" />
 
     </LinearLayout>
 

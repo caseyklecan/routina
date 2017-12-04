@@ -35,6 +35,9 @@ public class RunRoutineFragment extends Fragment {
     private ArrayList<Task> tasks;
     private int currentIndex = -1;
     private CountDownTimer timer;
+    private boolean finishedEarly = true;
+    private int snoozeCount = 0;
+    private int finishCount = 0;
 
     private String url;
 
@@ -86,8 +89,6 @@ public class RunRoutineFragment extends Fragment {
 
             }
         });
-        // todo read data, notably the task list
-        // also make the title on the top bar the name of the routine that is executing
 
         textTitle = (TextView) v.findViewById(R.id.text_task_name);
         textDialogue = (TextView) v.findViewById(R.id.text_cat_dialogue);
@@ -98,6 +99,10 @@ public class RunRoutineFragment extends Fragment {
         buttonDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (finishedEarly) {
+                    tasks.get(currentIndex).finishEarly();
+                    finishCount++;
+                }
                 timer.cancel();
                 setupTask();
             }
@@ -107,6 +112,7 @@ public class RunRoutineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 snooze();
+                tasks.get(currentIndex).snooze();
             }
         });
 
@@ -115,7 +121,10 @@ public class RunRoutineFragment extends Fragment {
 
     private void setupTask() {
         currentIndex++;
-        if (currentIndex == tasks.size()) finish();
+        if (currentIndex >= tasks.size()) {
+            finish();
+            return;
+        }
         imageCat.setImageResource(R.drawable.cat_happy);
         textTitle.setText(tasks.get(currentIndex).getName());
         long millis = TimeUnit.MINUTES.toMillis(Integer.valueOf(tasks.get(currentIndex).getTime()));
@@ -128,19 +137,24 @@ public class RunRoutineFragment extends Fragment {
             }
 
             public void onFinish() {
+                finishedEarly = false;
                 imageCat.setImageResource(R.drawable.cat_stressed);
                 buttonSnooze.setEnabled(true);
                 ((MainActivity) getActivity()).sendNotification("Time is up!", "Time to get moving onto the next task.");
             }
         }.start();
+        finishedEarly = true;
         buttonSnooze.setEnabled(false);
     }
 
     private void finish() {
-        ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_FINISH_ROUTINE, url);
+        taskRef.setValue(tasks);
+        ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_FINISH_ROUTINE, url, finishCount, snoozeCount);
     }
 
     private void snooze() {
+        finishedEarly = false;
+        snoozeCount++;
         long millis = TimeUnit.MINUTES.toMillis(Integer.valueOf(tasks.get(currentIndex).getSnooze()));
         buttonSnooze.setEnabled(false);
         timer = new CountDownTimer(millis, 1000) {
