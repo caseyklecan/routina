@@ -6,11 +6,10 @@ package itp341.klecan.casey.routina;
 
 public class RoutineConstants {
 
-    public static final String STATUS_PENDING = "pending";
-    public static final String STATUS_CREATED = "created";
-
+    // for Firebase references
     public static final String NODE_TASK = "taskList";
 
+    // for days of the week
     public static final String SUNDAY = "Sunday";
     public static final String MONDAY = "Monday";
     public static final String TUESDAY = "Tuesday";
@@ -26,6 +25,7 @@ public class RoutineConstants {
     public static final String FRI = "Fr ";
     public static final String SAT = "Sa ";
 
+    // for the titles of different fragments
     public static final String TITLE_MY_ROUTINES = "My Routines";
     public static final String TITLE_CREATE = "Create Routine";
     public static final String TITLE_EDIT = "Edit Routine";

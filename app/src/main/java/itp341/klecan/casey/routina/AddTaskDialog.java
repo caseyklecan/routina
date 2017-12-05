@@ -29,11 +29,17 @@ public class AddTaskDialog extends DialogFragment {
         // Required empty public constructor
     }
 
+    /*
+     * newInstance to use when adding a new task
+     */
     public static AddTaskDialog newInstance() {
         AddTaskDialog fragment = new AddTaskDialog();
         return fragment;
     }
 
+    /*
+     * newInstance to use when editing an existing task
+     */
     public static AddTaskDialog newInstance(Task toEdit) {
         AddTaskDialog fragment = new AddTaskDialog();
         Bundle args = new Bundle();
@@ -42,6 +48,11 @@ public class AddTaskDialog extends DialogFragment {
         return fragment;
     }
 
+    /*
+     * onCreateDialog handles all the UI elements and their listeners.
+     * If there is a task to edit, this will populate the UI elements with the
+     * appropriate data.
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -90,6 +101,9 @@ public class AddTaskDialog extends DialogFragment {
         return builder.create();
     }
 
+    /*
+     * Handles passing the Task data back to the CreateRoutineFragment.
+     */
     public interface MyDialogCallback {
         public void saveTask(Task t);
         public void deleteTask(Task t);

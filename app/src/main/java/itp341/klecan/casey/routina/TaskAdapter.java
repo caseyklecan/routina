@@ -19,6 +19,9 @@ public class TaskAdapter extends FirebaseListAdapter<Task> {
         super(activity, modelClass, modelLayout, ref);
     }
 
+    /*
+     * Populates the row view with the given Task model.
+     */
     @Override
     protected void populateView(View v, Task model, int position) {
         TextView name = (TextView) v.findViewById(R.id.text_routine_name);

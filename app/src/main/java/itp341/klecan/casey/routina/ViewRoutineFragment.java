@@ -49,6 +49,9 @@ public class ViewRoutineFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /*
+     * newInstance takes the URL of the routine that is being viewed.
+     */
     public static ViewRoutineFragment newInstance(String url) {
         ViewRoutineFragment fragment = new ViewRoutineFragment();
         Bundle args = new Bundle();
@@ -62,6 +65,9 @@ public class ViewRoutineFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /*
+     * Handles the UI elements as well as retrieving information from the database.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,7 +76,7 @@ public class ViewRoutineFragment extends Fragment {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         final String url = getArguments().getString(ARG_ROUTINE);
         dbRoutine = db.getReferenceFromUrl(url);
-        dbTasks = dbRoutine.child("taskList");
+        dbTasks = dbRoutine.child(RoutineConstants.NODE_TASK);
         final Routine routine = new Routine();
 
         dbRoutine.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -126,9 +132,7 @@ public class ViewRoutineFragment extends Fragment {
 
             }
         });
-
         currentRoutine = routine;
-
 
         editButton = (Button) v.findViewById(R.id.button_edit_routine);
         editButton.setOnClickListener(new View.OnClickListener() {
@@ -172,6 +176,9 @@ public class ViewRoutineFragment extends Fragment {
         return v;
     }
 
+    /*
+     * Guarantees the correct title will be shown, even when the user presses the back button.
+     */
     @Override
     public void onResume() {
         super.onResume();

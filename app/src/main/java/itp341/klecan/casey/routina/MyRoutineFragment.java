@@ -42,6 +42,9 @@ public class MyRoutineFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /*
+     * Handles all the UI elements to display the current list of routines.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -72,11 +75,17 @@ public class MyRoutineFragment extends Fragment {
         return v;
     }
 
+    /*
+     * The adapter for the list view that will display the routines.
+     */
     private class RoutineAdapter extends FirebaseListAdapter<Routine> {
         public RoutineAdapter(Activity activity, Class<Routine> modelClass, int modelLayout, DatabaseReference ref) {
             super(activity, modelClass, modelLayout, ref);
         }
 
+        /*
+         * Populates the UI elements' data for the given Routine.
+         */
         @Override
         protected void populateView(View v, Routine model, int position) {
             TextView name = (TextView) v.findViewById(R.id.text_routine_name);
@@ -115,6 +124,9 @@ public class MyRoutineFragment extends Fragment {
         }
     }
 
+    /*
+     * Guarantees the correct title will be shown, even when the user presses the back button.
+     */
     @Override
     public void onResume() {
         super.onResume();

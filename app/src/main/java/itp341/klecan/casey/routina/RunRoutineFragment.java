@@ -52,6 +52,9 @@ public class RunRoutineFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /*
+     * newInstance takes the URL of the routine that is currently being run.
+     */
     public static RunRoutineFragment newInstance(String url) {
         RunRoutineFragment fragment = new RunRoutineFragment();
         Bundle args = new Bundle();
@@ -65,6 +68,10 @@ public class RunRoutineFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /*
+     * Handles the UI elements, along with getting data from the database. Starts the routine by
+     * calling setupTask once everything is ready to go.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -134,6 +141,10 @@ public class RunRoutineFragment extends Fragment {
         return v;
     }
 
+    /*
+     * Sets up the next task. Sets the cat image to the happy cat instead of the stressed cat,
+     * starts the timer with the amount of time for the task, disables the snooze button.
+     */
     private void setupTask() {
         currentIndex++;
         if (currentIndex >= tasks.size()) {
@@ -144,29 +155,45 @@ public class RunRoutineFragment extends Fragment {
         textTitle.setText(tasks.get(currentIndex).getName());
         long millis = TimeUnit.MINUTES.toMillis(Integer.valueOf(tasks.get(currentIndex).getTime()));
         timer = new CountDownTimer(millis, 1000) {
+            /*
+             * Sets the amount of time left on the text view.
+             */
             public void onTick(long millis) {
                 long minutes = millis / 1000 / 60;
                 long seconds = millis / 1000 % 60;
                 String rem = "Time remaining:\n" + String.valueOf(minutes) + ":" + String.valueOf(seconds);
                 textDialogue.setText(rem);
+                ((MainActivity) getActivity()).sendNotification("Time is up!", "Time to get moving onto the next task.");
             }
 
+            /*
+             * Enables the snooze button, sets the cat image to be stressed, encourages the user to
+             * move onto the next task by sending them a notification that it's time to move on.
+             */
             public void onFinish() {
                 finishedEarly = false;
                 imageCat.setImageResource(R.drawable.cat_stressed);
                 buttonSnooze.setEnabled(true);
-                ((MainActivity) getActivity()).sendNotification("Time is up!", "Time to get moving onto the next task.");
+                ((MainActivity) getActivity()).sendNotification("SNOOZE Time is up!", "Time to get moving onto the next task, right now!");
             }
         }.start();
         finishedEarly = true;
         buttonSnooze.setEnabled(false);
     }
 
+    /*
+     * Handles the end of the routine-- resets the task node of the database with the new snooze /
+     * finish early counts for tasks, then goes to the finish routine fragment.
+     */
     private void finish() {
         taskRef.setValue(tasks);
         ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_FINISH_ROUTINE, url, finishCount, snoozeCount);
     }
 
+    /*
+     * Handles the user snoozing the current task. It will restart the timer with the snooze amount,
+     * increase the snooze count for the routine, and disable the snooze button.
+     */
     private void snooze() {
         finishedEarly = false;
         snoozeCount++;
@@ -188,6 +215,9 @@ public class RunRoutineFragment extends Fragment {
         }.start();
     }
 
+    /*
+     * Guarantees the correct title will be shown, even when the user presses the back button.
+     */
     @Override
     public void onResume() {
         super.onResume();

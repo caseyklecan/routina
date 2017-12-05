@@ -1,6 +1,5 @@
 package itp341.klecan.casey.routina;
 
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
@@ -9,11 +8,11 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
 
 import com.crashlytics.android.Crashlytics;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +20,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.optimizely.Optimizely;
 import io.fabric.sdk.android.Fabric;
-import itp341.klecan.casey.routina.model.Routine;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,11 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference user;
 
+    /*
+     * Starts the activity, gets user information from the database (or created a placeholder node
+     * if the user has no routines in the database yet). Then passes the UI off onto the fragment.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Optimizely.startOptimizelyWithAPIToken("AANm0IcB-fiDA1sA0YiNHbcHXXfEPx_j~9435701948", getApplication());
-
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_main);
 
@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                Log.d("MAIN ACTIVITY", databaseError.toString());
             }
         });
 
@@ -78,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    /*
+     * Handles switching between fragments, changing the title on the action bar.
+     */
     public void goToFragment(int fragId, String routine) {
         Fragment frag = MyRoutineFragment.newInstance();
         String title = "Routina";
@@ -111,6 +114,10 @@ public class MainActivity extends AppCompatActivity {
         setTitle(title);
     }
 
+    /*
+     * Handles switching between fragments, changing the title on the action bar for finishing
+     * the routine.
+     */
     public void goToFragment(int fragId, String url, int int1, int int2) {
         String title = RoutineConstants.TITLE_FINISH;
         if (fragId != FRAG_FINISH_ROUTINE) return;
@@ -121,21 +128,33 @@ public class MainActivity extends AppCompatActivity {
         ft.replace(R.id.content_frame, frag).addToBackStack(title).commit();
     }
 
+    /*
+     * Logs the user for Crashlytics reporting.
+     */
     private void logUser(String id) {
         Crashlytics.setUserIdentifier(id);
         Crashlytics.setUserEmail("user@fabric.io");
         Crashlytics.setUserName("Test User");
     }
 
+    /*
+     * Forces a crash (for Crashlytics testing).
+     */
     public void forceCrash(View view) {
         throw new RuntimeException("This is a crash");
     }
 
-    // Gets the Firebase reference to the current user's node.
+    /*
+     * Gets the Firebase DatabaseReference to the current user's node.
+     */
     public DatabaseReference getReferenceToCurrentUser() {
         return user;
     }
 
+    /*
+     * Sends a local notification with the given title and content immediately. The icon will be
+     * the same cat drawable that appears in the app icon/throughout the app.
+     */
     public void sendNotification(String title, String content) {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         NotificationCompat.Builder mBuilder =

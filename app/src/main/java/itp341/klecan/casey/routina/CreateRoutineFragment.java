@@ -4,6 +4,7 @@ package itp341.klecan.casey.routina;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -15,8 +16,10 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseListAdapter;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +38,10 @@ import itp341.klecan.casey.routina.model.Task;
 public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyDialogCallback {
 
     private EditText editName;
-    private TimePicker editTime;
+    private EditText editHour;
+    private EditText editMinute;
+    private RadioGroup ampm;
+
     private CheckBox sun;
     private CheckBox mon;
     private CheckBox tues;
@@ -44,6 +50,7 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
     private CheckBox fri;
     private CheckBox sat;
 
+    private TextView textTasks;
     private ListView taskList;
     private TaskAdapter adapter;
 
@@ -51,11 +58,11 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
     private Button addTaskButton;
     private Button cancelButton;
 
-    private String routineName;
     private String routineHour;
     private String routineMinute;
     private String routineAM_PM;
     private ArrayList<Task> routineTaskList;
+    private ArrayList<Task> originalTaskList;
 
     private int editIndex = -1;
 
@@ -69,11 +76,17 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         // Required empty public constructor
     }
 
+    /*
+     * newInstance to use when creating a new routine.
+     */
     public static CreateRoutineFragment newInstance() {
         CreateRoutineFragment fragment = new CreateRoutineFragment();
         return fragment;
     }
 
+    /*
+     * newInstance to use when editing an existing routine.
+     */
     public static CreateRoutineFragment newInstance(String url) {
         CreateRoutineFragment fragment = new CreateRoutineFragment();
         Bundle args = new Bundle();
@@ -93,18 +106,20 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         View v = inflater.inflate(R.layout.layout_create_routine, null);
 
         editName = (EditText) v.findViewById(R.id.edit_routine_name);
-        editTime = (TimePicker) v.findViewById(R.id.time_routine_start);
-        editTime.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+        editHour = (EditText) v.findViewById(R.id.edit_hours);
+        editMinute = (EditText) v.findViewById(R.id.edit_minutes);
+        ampm = (RadioGroup) v.findViewById(R.id.group_am_pm);
+        routineAM_PM = "AM";
+
+        // handles the Am/Pm radiogroup
+        ampm.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onTimeChanged(TimePicker timePicker, int i, int i1) {
-                if (i < 12) {
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                if (radioGroup.getCheckedRadioButtonId() == R.id.button_am) {
                     routineAM_PM = "AM";
                 } else {
                     routineAM_PM = "PM";
                 }
-
-                routineHour = String.valueOf(i);
-                routineMinute = String.valueOf(i1);
             }
         });
 
@@ -113,7 +128,7 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             @Override
             public void onClick(View view) {
                 saveRoutine();
-                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, null);
+
             }
         });
 
@@ -130,7 +145,6 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             @Override
             public void onClick(View view) {
                cancel();
-                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
 
             }
         });
@@ -143,11 +157,17 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         fri = (CheckBox) v.findViewById(R.id.checkbox_fri);
         sat = (CheckBox) v.findViewById(R.id.checkbox_sat);
 
+        textTasks = (TextView) v.findViewById(R.id.text_tasks);
+        taskList = (ListView) v.findViewById(R.id.list_tasks);
+
         if (getArguments() == null) {
-            // new routine
-            routineTaskList = new ArrayList<>();
+            // new routine -- get rid of the add task UI elements
+            textTasks.setVisibility(View.GONE);
+            taskList.setVisibility(View.GONE);
+            addTaskButton.setVisibility(View.GONE);
+
         } else {
-            // edit routine
+            // edit routine -- populate the UI with the data in the routine
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             String url = getArguments().getString(ARG_ROUTINE);
             routine = db.getReferenceFromUrl(url);
@@ -185,15 +205,14 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
 
                     String time = r.getStartTime();
                     int colonIndex = time.indexOf(':');
-                    int hour = Integer.valueOf(time.substring(0 , colonIndex));
-                    int minute = Integer.valueOf(time.substring(colonIndex + 1, colonIndex + 3));
+                    String hour = time.substring(0 , colonIndex);
+                    String minute = time.substring(colonIndex + 1, colonIndex + 3);
 
-                    editTime.setHour(hour);
-                    editTime.setMinute(minute);
+                    editHour.setText(hour);
+                    editMinute.setText(minute);
 
                     routineTaskList = r.getTaskList();
-
-                    routineName = r.getName();
+                    originalTaskList = r.getTaskList();
                 }
 
                 @Override
@@ -202,9 +221,7 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
                 }
             });
 
-            adapter = new TaskAdapter(getActivity(), Task.class, R.layout.layout_row, tasks);
-            taskList = (ListView) v.findViewById(R.id.list_tasks);
-            taskList.setAdapter(adapter);
+            setupAdapter();
             taskList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -219,8 +236,22 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         return v;
     }
 
-    // saves the current routine in firebase (if it's new, creates it, else updates it)
+    /*
+     * Saves the routine to Firebase. If it's new, gets all the data and creates a new routine node.
+     * If it already exists, just updates the database with the new data.
+     */
     private void saveRoutine() {
+        routineHour = editHour.getText().toString();
+        if (Integer.valueOf(routineHour) > 12 || Integer.valueOf(routineHour) < 1) {
+            Toast.makeText(getActivity(), "Invalid time! Please change your selection and try again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        routineMinute = editMinute.getText().toString();
+        if (Integer.valueOf(routineMinute) > 59 || Integer.valueOf(routineMinute) < 0) {
+            Toast.makeText(getActivity(), "Invalid time! Please change your selection and try again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         String name = editName.getText().toString();
         String time = routineHour + ":" + routineMinute + " " + routineAM_PM;
 
@@ -250,7 +281,6 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         if (routineTaskList == null) routineTaskList = new ArrayList<>();
 
         Routine newRoutine = new Routine(name, time, days, routineTaskList);
-//        newRoutine.setStatus(RoutineConstants.STATUS_CREATED);
 
         DatabaseReference user = ((MainActivity) getActivity()).getReferenceToCurrentUser();
         if (routine == null) {
@@ -261,44 +291,42 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             // existing routine, need to update in the database
             routine.setValue(newRoutine);
         }
-
-        startCheckout(getView());
-
+        ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
     }
 
     /*
-     * If the routine hasn't been created yet, just don't save it. Otherwise, see if it was created
-     * to store the tasks, or if it was an existing routine being edited.
+     * If the routine hasn't been created yet, just don't save it. Otherwise, make sure it has the
+     * original task list and save that.
      */
     private void cancel() {
         if (routine != null) {
-            if (r != null && r.getStatus().equals(RoutineConstants.STATUS_PENDING)) {
-                // need to delete
-                routine.removeValue();
-            }
+            r.setTaskList(originalTaskList);
+            routine.setValue(r);
         }
+        ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
     }
 
-    public void startCheckout(View view) {
-        if (routine == null) {
-            Optimizely.trackEvent("create_new_routine");
-        } else {
-            Optimizely.trackEvent("update_routine");
-        }
-    }
-
+    /*
+     * Shows the Task Dialog when a task needs to be added.
+     */
     private void showAddTaskDialog() {
         AddTaskDialog dialog = AddTaskDialog.newInstance();
         dialog.setTargetFragment(this, 0);
         dialog.show(getFragmentManager(), "AddTaskDialog");
     }
 
+    /*
+     * Shows the Task Dialog when the task exists and needs to be edited.
+     */
     private void showAddTaskDialog(Task toEdit) {
         AddTaskDialog dialog = AddTaskDialog.newInstance(toEdit);
         dialog.setTargetFragment(this, 0);
         dialog.show(getFragmentManager(), "AddTaskDialog");
     }
 
+    /*
+     * Saves the task list & notifies the adapter that there has been a change.
+     */
     @Override
     public void saveTask(Task t) {
         if (routineTaskList == null) {
@@ -310,8 +338,46 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             routineTaskList.set(editIndex, t);
             editIndex = -1;
         }
+        if (tasks != null) tasks.setValue(routineTaskList);
+        else if (routine != null) {
+            if (r != null) {
+                r.setTaskList(routineTaskList);
+                routine.setValue(r);
+            } else {
+                routine.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        r = dataSnapshot.getValue(Routine.class);
+                        routine.setValue(r);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+        }
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
+        else {
+            setupAdapter();
+        }
     }
 
+    /*
+     * Sets up the task list adapter.
+     */
+    private void setupAdapter() {
+        adapter = new TaskAdapter(getActivity(), Task.class, R.layout.layout_row, tasks);
+        taskList.setAdapter(adapter);
+    }
+
+    /*
+     * Deletes the task from the task list.
+     */
     @Override
     public void deleteTask(Task t) {
         if (editIndex < 0) return;
@@ -319,6 +385,9 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         tasks.setValue(routineTaskList);
     }
 
+    /*
+     * Guarantees the title will display correctly, even when the user presses the Back button.
+     */
     @Override
     public void onResume() {
         super.onResume();

@@ -17,10 +17,20 @@ public class Task implements Serializable {
     private int snoozeCount;
     private int earlyFinishCount;
 
+    /*
+     * Default constructor for Task
+     */
     public Task() {
         this.name = "";
+        this.time = "";
+        this.snooze = "";
+        snoozeCount = 0;
+        earlyFinishCount = 0;
     }
 
+    /*
+     * Task constructor when data is available
+     */
     public Task(String name, String time, String snooze) {
         this.name = name;
         this.time = time;

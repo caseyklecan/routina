@@ -39,6 +39,10 @@ public class FinishRoutineFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /*
+     * newInstance takes the URL of the routine that was just completed, along with the counters for
+     * how many tasks were finished early and snoozed.
+     */
     public static FinishRoutineFragment newInstance(String url, int finish, int snooze) {
         FinishRoutineFragment fragment = new FinishRoutineFragment();
         Bundle args = new Bundle();
@@ -54,6 +58,9 @@ public class FinishRoutineFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    /*
+     * Handles all the UI elements, along with retrieving information from the database.
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -97,6 +104,11 @@ public class FinishRoutineFragment extends Fragment {
         return v;
     }
 
+    /*
+     * Goes through the tasks to see how many times each has been snoozed/finished early. It will
+     * choose the one that has been snoozed the most OR finished early the most and will display
+     * encouragement/motivation for that task.
+     */
     private void processTasks() {
         int snoozeCount = 0;
         int finishCount = 0;
@@ -126,6 +138,10 @@ public class FinishRoutineFragment extends Fragment {
         }
     }
 
+    /*
+     * This method will display encouragement/motivation based on whether the routine was snoozed or
+     * finished early more.
+     */
     private void processRoutine() {
         int snooze = getArguments().getInt(ARG_SNOOZE);
         int finish = getArguments().getInt(ARG_FINISH);
@@ -143,6 +159,9 @@ public class FinishRoutineFragment extends Fragment {
         }
     }
 
+    /*
+     * Guarantees the title will be correct, even when the back button is pressed.
+     */
     @Override
     public void onResume() {
         super.onResume();
