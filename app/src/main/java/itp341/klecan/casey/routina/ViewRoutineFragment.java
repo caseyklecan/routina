@@ -172,4 +172,10 @@ public class ViewRoutineFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(RoutineConstants.TITLE_VIEW);
+    }
+
 }

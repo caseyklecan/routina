@@ -114,4 +114,10 @@ public class MyRoutineFragment extends Fragment {
             days.setText(daysText);
         }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(RoutineConstants.TITLE_MY_ROUTINES);
+    }
 }

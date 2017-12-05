@@ -143,4 +143,10 @@ public class FinishRoutineFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(RoutineConstants.TITLE_FINISH);
+    }
+
 }

@@ -30,4 +30,6 @@ public class RoutineConstants {
     public static final String TITLE_CREATE = "Create Routine";
     public static final String TITLE_EDIT = "Edit Routine";
     public static final String TITLE_VIEW = "View Routine";
+    public static final String TITLE_RUN = "Run Routine";
+    public static final String TITLE_FINISH = "You made it!";
 }

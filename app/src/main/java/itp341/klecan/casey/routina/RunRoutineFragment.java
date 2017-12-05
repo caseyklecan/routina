@@ -188,6 +188,12 @@ public class RunRoutineFragment extends Fragment {
         }.start();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (routine == null) getActivity().setTitle(RoutineConstants.TITLE_RUN);
+        else getActivity().setTitle(routine.getName());
+    }
 
 
 }

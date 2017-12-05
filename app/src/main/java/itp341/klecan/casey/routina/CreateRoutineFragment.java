@@ -318,4 +318,10 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
         routineTaskList.remove(editIndex);
         tasks.setValue(routineTaskList);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        getActivity().setTitle(RoutineConstants.TITLE_CREATE);
+    }
 }

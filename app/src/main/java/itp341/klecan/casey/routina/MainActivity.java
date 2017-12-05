@@ -96,6 +96,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case FRAG_RUN_ROUTINE: // run routine fragment
                 frag = RunRoutineFragment.newInstance(routine);
+                title = RoutineConstants.TITLE_RUN;
                 break;
             case FRAG_EDIT_ROUTINE: // create routine fragment w data
                 frag = CreateRoutineFragment.newInstance(routine);
@@ -106,17 +107,18 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.replace(R.id.content_frame, frag).addToBackStack("myRoutine").commit();
+        ft.replace(R.id.content_frame, frag).addToBackStack(title).commit();
         setTitle(title);
     }
 
     public void goToFragment(int fragId, String url, int int1, int int2) {
+        String title = RoutineConstants.TITLE_FINISH;
         if (fragId != FRAG_FINISH_ROUTINE) return;
         Fragment frag = FinishRoutineFragment.newInstance(url, int1, int2);
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-        ft.replace(R.id.content_frame, frag).addToBackStack("myRoutine").commit();
+        ft.replace(R.id.content_frame, frag).addToBackStack(title).commit();
     }
 
     private void logUser(String id) {
