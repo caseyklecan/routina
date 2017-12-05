@@ -2,8 +2,10 @@ package itp341.klecan.casey.routina;
 
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -95,26 +97,26 @@ public class ViewRoutineFragment extends Fragment {
                 HashMap<String, Boolean> map = currentRoutine.getDaysOn();
                 String daysText = "";
 
-                if (map.get("Sunday")) {
-                    daysText += "Su ";
+                if (map.get(RoutineConstants.SUNDAY)) {
+                    daysText += RoutineConstants.SUN;
                 }
-                if (map.get("Monday")) {
-                    daysText += "Mo ";
+                if (map.get(RoutineConstants.MONDAY)) {
+                    daysText += RoutineConstants.MON;
                 }
-                if (map.get("Tuesday")) {
-                    daysText += "Tu ";
+                if (map.get(RoutineConstants.TUESDAY)) {
+                    daysText += RoutineConstants.TUES;
                 }
-                if (map.get("Wednesday")) {
-                    daysText += "We ";
+                if (map.get(RoutineConstants.WEDNESDAY)) {
+                    daysText += RoutineConstants.WED;
                 }
-                if (map.get("Thursday")) {
-                    daysText += "Th ";
+                if (map.get(RoutineConstants.THURSDAY)) {
+                    daysText += RoutineConstants.THURS;
                 }
-                if (map.get("Friday")) {
-                    daysText += "Fr ";
+                if (map.get(RoutineConstants.FRIDAY)) {
+                    daysText += RoutineConstants.FRI;
                 }
-                if (map.get("Saturday")) {
-                    daysText += "Sa ";
+                if (map.get(RoutineConstants.SATURDAY)) {
+                    daysText += RoutineConstants.SAT;
                 }
                 textDays.setText(daysText);
             }
@@ -140,8 +142,22 @@ public class ViewRoutineFragment extends Fragment {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dbRoutine.removeValue();
-                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                dialog.setMessage(getResources().getString(R.string.label_delete_question))
+                        .setTitle(R.string.label_delete)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                dbRoutine.removeValue();
+                                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                // just close the popup
+                            }
+                        }).show();
             }
         });
 

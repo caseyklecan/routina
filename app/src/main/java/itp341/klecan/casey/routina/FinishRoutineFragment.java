@@ -62,7 +62,7 @@ public class FinishRoutineFragment extends Fragment {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         String url = getArguments().getString(ARG_URL);
         dbRoutine = db.getReferenceFromUrl(url);
-        dbTasks = dbRoutine.child("taskList");
+        dbTasks = dbRoutine.child(RoutineConstants.NODE_TASK);
 
         dbTasks.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -132,12 +132,12 @@ public class FinishRoutineFragment extends Fragment {
 
         if (snooze < finish) {
             String praise = "You finished tasks early " + String.valueOf(finish) + " times in this routine! Way to go!";
-            String title = "Nice work!";
+            String title = getResources().getString(R.string.label_feedback_good);
             textTitle.setText(title);
             textResults.setText(praise);
         } else {
             String meh = "You've snoozed " + String.valueOf(snooze) + " times in this routine. You should work on being a little more efficient.";
-            String title = "A for effort";
+            String title = getResources().getString(R.string.label_feedback_bad);
             textTitle.setText(title);
             textResults.setText(meh);
         }

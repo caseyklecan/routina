@@ -80,21 +80,26 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToFragment(int fragId, String routine) {
         Fragment frag = MyRoutineFragment.newInstance();
+        String title = "Routina";
 
         switch (fragId) {
             case FRAG_MY_ROUTINE: // my routine list
+                title = RoutineConstants.TITLE_MY_ROUTINES;
                 break;
             case FRAG_CREATE_ROUTINE: // create routine fragment
                 frag = CreateRoutineFragment.newInstance();
+                title = RoutineConstants.TITLE_CREATE;
                 break;
             case FRAG_VIEW_ROUTINE: // view routine fragment
                 frag = ViewRoutineFragment.newInstance(routine);
+                title = RoutineConstants.TITLE_VIEW;
                 break;
             case FRAG_RUN_ROUTINE: // run routine fragment
                 frag = RunRoutineFragment.newInstance(routine);
                 break;
             case FRAG_EDIT_ROUTINE: // create routine fragment w data
                 frag = CreateRoutineFragment.newInstance(routine);
+                title = RoutineConstants.TITLE_EDIT;
                 break;
         }
 
@@ -102,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction ft = fm.beginTransaction();
         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         ft.replace(R.id.content_frame, frag).addToBackStack("myRoutine").commit();
+        setTitle(title);
     }
 
     public void goToFragment(int fragId, String url, int int1, int int2) {

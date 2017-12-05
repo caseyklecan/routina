@@ -89,26 +89,26 @@ public class MyRoutineFragment extends Fragment {
             HashMap<String, Boolean> map = model.getDaysOn();
             String daysText = "";
 
-            if (map.get("Sunday")) {
-                daysText += "Su ";
+            if (map.get(RoutineConstants.SUNDAY)) {
+                daysText += RoutineConstants.SUN;
             }
-            if (map.get("Monday")) {
-                daysText += "Mo ";
+            if (map.get(RoutineConstants.MONDAY)) {
+                daysText += RoutineConstants.MON;
             }
-            if (map.get("Tuesday")) {
-                daysText += "Tu ";
+            if (map.get(RoutineConstants.TUESDAY)) {
+                daysText += RoutineConstants.TUES;
             }
-            if (map.get("Wednesday")) {
-                daysText += "We ";
+            if (map.get(RoutineConstants.WEDNESDAY)) {
+                daysText += RoutineConstants.WED;
             }
-            if (map.get("Thursday")) {
-                daysText += "Th ";
+            if (map.get(RoutineConstants.THURSDAY)) {
+                daysText += RoutineConstants.THURS;
             }
-            if (map.get("Friday")) {
-                daysText += "Fr ";
+            if (map.get(RoutineConstants.FRIDAY)) {
+                daysText += RoutineConstants.FRI;
             }
-            if (map.get("Saturday")) {
-                daysText += "Sa ";
+            if (map.get(RoutineConstants.SATURDAY)) {
+                daysText += RoutineConstants.SAT;
             }
 
             days.setText(daysText);

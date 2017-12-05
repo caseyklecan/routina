@@ -2,8 +2,10 @@ package itp341.klecan.casey.routina;
 
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +49,7 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
 
     private Button saveButton;
     private Button addTaskButton;
+    private Button cancelButton;
 
     private String routineName;
     private String routineHour;
@@ -58,6 +61,7 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
 
     private DatabaseReference routine;
     private DatabaseReference tasks;
+    private Routine r;
 
     private static final String ARG_ROUTINE = "routina.create_routine.routine_url";
 
@@ -121,6 +125,16 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             }
         });
 
+        cancelButton = (Button) v.findViewById(R.id.button_cancel_routine);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               cancel();
+                ((MainActivity) getActivity()).goToFragment(MainActivity.FRAG_MY_ROUTINE, "");
+
+            }
+        });
+
         sun = (CheckBox) v.findViewById(R.id.checkbox_sun);
         mon = (CheckBox) v.findViewById(R.id.checkbox_mon);
         tues = (CheckBox) v.findViewById(R.id.checkbox_tue);
@@ -137,35 +151,35 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             FirebaseDatabase db = FirebaseDatabase.getInstance();
             String url = getArguments().getString(ARG_ROUTINE);
             routine = db.getReferenceFromUrl(url);
-            tasks = routine.child("taskList");
+            tasks = routine.child(RoutineConstants.NODE_TASK);
 
             routine.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    Routine r = dataSnapshot.getValue(Routine.class);
+                    r = dataSnapshot.getValue(Routine.class);
 
                     editName.setText(r.getName());
 
                     HashMap<String, Boolean> map = r.getDaysOn();
-                    if (map.get("Sunday")) {
+                    if (map.get(RoutineConstants.SUNDAY)) {
                         sun.setChecked(true);
                     }
-                    if (map.get("Monday")) {
+                    if (map.get(RoutineConstants.MONDAY)) {
                         mon.setChecked(true);
                     }
-                    if (map.get("Tuesday")) {
+                    if (map.get(RoutineConstants.TUESDAY)) {
                         tues.setChecked(true);
                     }
-                    if (map.get("Wednesday")) {
+                    if (map.get(RoutineConstants.WEDNESDAY)) {
                         wed.setChecked(true);
                     }
-                    if (map.get("Thursday")) {
+                    if (map.get(RoutineConstants.THURSDAY)) {
                         thurs.setChecked(true);
                     }
-                    if (map.get("Friday")) {
+                    if (map.get(RoutineConstants.FRIDAY)) {
                         fri.setChecked(true);
                     }
-                    if (map.get("Saturday")) {
+                    if (map.get(RoutineConstants.SATURDAY)) {
                         sat.setChecked(true);
                     }
 
@@ -178,10 +192,8 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
                     editTime.setMinute(minute);
 
                     routineTaskList = r.getTaskList();
-                    // todo set task list
 
                     routineName = r.getName();
-                    // todo am / pm
                 }
 
                 @Override
@@ -214,31 +226,31 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
 
         HashMap<String, Boolean> days = Routine.getEmptyDays();
         if (sun.isChecked()) {
-            days.put("Sunday", true);
+            days.put(RoutineConstants.SUNDAY, true);
         }
         if (mon.isChecked()) {
-            days.put("Monday", true);
+            days.put(RoutineConstants.MONDAY, true);
         }
         if (tues.isChecked()) {
-            days.put("Tuesday", true);
+            days.put(RoutineConstants.TUESDAY, true);
         }
         if (wed.isChecked()) {
-            days.put("Wednesday", true);
+            days.put(RoutineConstants.WEDNESDAY, true);
         }
         if (thurs.isChecked()) {
-            days.put("Thursday", true);
+            days.put(RoutineConstants.THURSDAY, true);
         }
         if (fri.isChecked()) {
-            days.put("Friday", true);
+            days.put(RoutineConstants.FRIDAY, true);
         }
         if (sat.isChecked()) {
-            days.put("Saturday", true);
+            days.put(RoutineConstants.SATURDAY, true);
         }
 
         if (routineTaskList == null) routineTaskList = new ArrayList<>();
 
         Routine newRoutine = new Routine(name, time, days, routineTaskList);
-        newRoutine.setStatus(RoutineConstants.STATUS_CREATED);
+//        newRoutine.setStatus(RoutineConstants.STATUS_CREATED);
 
         DatabaseReference user = ((MainActivity) getActivity()).getReferenceToCurrentUser();
         if (routine == null) {
@@ -254,12 +266,17 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
 
     }
 
+    /*
+     * If the routine hasn't been created yet, just don't save it. Otherwise, see if it was created
+     * to store the tasks, or if it was an existing routine being edited.
+     */
     private void cancel() {
-        if (routine == null) {
-            // don't save
+        if (routine != null) {
+            if (r != null && r.getStatus().equals(RoutineConstants.STATUS_PENDING)) {
+                // need to delete
+                routine.removeValue();
+            }
         }
-        // else if routine isn't yet "created" delete it
-        // else just don't update it
     }
 
     public void startCheckout(View view) {
@@ -293,7 +310,6 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
             routineTaskList.set(editIndex, t);
             editIndex = -1;
         }
-        tasks.setValue(routineTaskList);
     }
 
     @Override

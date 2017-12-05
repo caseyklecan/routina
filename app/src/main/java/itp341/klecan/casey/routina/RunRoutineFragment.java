@@ -22,6 +22,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import itp341.klecan.casey.routina.model.Routine;
 import itp341.klecan.casey.routina.model.Task;
 
 public class RunRoutineFragment extends Fragment {
@@ -40,6 +41,7 @@ public class RunRoutineFragment extends Fragment {
     private int finishCount = 0;
 
     private String url;
+    private Routine routine;
 
     private DatabaseReference routineRef;
     private DatabaseReference taskRef;
@@ -71,7 +73,20 @@ public class RunRoutineFragment extends Fragment {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         url = getArguments().getString(ARG_URL);
         routineRef = db.getReferenceFromUrl(url);
-        taskRef = routineRef.child("taskList");
+        taskRef = routineRef.child(RoutineConstants.NODE_TASK);
+
+        routineRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                routine = dataSnapshot.getValue(Routine.class);
+                getActivity().setTitle(routine.getName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         taskRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -167,7 +182,7 @@ public class RunRoutineFragment extends Fragment {
 
             public void onFinish() {
                 imageCat.setImageResource(R.drawable.cat_stressed);
-                textDialogue.setText("Uh oh! You're out of time! Get moving onto the next task!");
+                textDialogue.setText(getResources().getString(R.string.label_out_of_time));
                 ((MainActivity) getActivity()).sendNotification("Time is up!", "Time to get moving onto the next task.");
             }
         }.start();
