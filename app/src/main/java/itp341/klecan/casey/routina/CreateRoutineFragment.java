@@ -241,18 +241,22 @@ public class CreateRoutineFragment extends Fragment implements AddTaskDialog.MyD
      * If it already exists, just updates the database with the new data.
      */
     private void saveRoutine() {
+        String name = editName.getText().toString();
+        if (name.length() == 0) {
+            Toast.makeText(getActivity(), "Invalid input! Please add a name and try again.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         routineHour = editHour.getText().toString();
-        if (Integer.valueOf(routineHour) > 12 || Integer.valueOf(routineHour) < 1) {
+        if (routineHour.length() == 0 || Integer.valueOf(routineHour) > 12 || Integer.valueOf(routineHour) < 1) {
             Toast.makeText(getActivity(), "Invalid time! Please change your selection and try again.", Toast.LENGTH_LONG).show();
             return;
         }
         routineMinute = editMinute.getText().toString();
-        if (Integer.valueOf(routineMinute) > 59 || Integer.valueOf(routineMinute) < 0) {
+        if (routineMinute.length() == 0 || Integer.valueOf(routineMinute) > 59 || Integer.valueOf(routineMinute) < 0) {
             Toast.makeText(getActivity(), "Invalid time! Please change your selection and try again.", Toast.LENGTH_LONG).show();
             return;
         }
-
-        String name = editName.getText().toString();
         String time = routineHour + ":" + routineMinute + " " + routineAM_PM;
 
         HashMap<String, Boolean> days = Routine.getEmptyDays();

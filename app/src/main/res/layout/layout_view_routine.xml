@@ -39,13 +39,13 @@
         android:layout_height="wrap_content"
         android:text="@string/label_tasks"
         android:textColor="@color/colorDark"
-        android:textSize="@dimen/fontLarge"
+        android:textSize="@dimen/fontReg"
         android:layout_margin="@dimen/marginBetween"
-        android:textAlignment="center"/>
+        android:textAlignment="textStart"/>
 
     <ListView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="250dp"
         android:id="@+id/list_tasks"
         android:layout_marginTop="8dp">
 
@@ -55,17 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:id="@+id/button_run_routine"
-            android:text="@string/label_run"
-            android:theme="@style/ButtonStyle"
-            android:textColor="@color/colorTeal"
-            android:contentDescription="@string/label_run"
-            android:layout_weight="1"/>
 
         <Button
             android:layout_width="match_parent"
@@ -83,12 +72,23 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:id="@+id/button_delete_routine"
-            android:text="@string/label_delete"
+            android:text="@string/label_delete_routine"
             android:theme="@style/ButtonStyle"
             android:textColor="@color/colorTeal"
-            android:contentDescription="@string/label_delete"
+            android:contentDescription="@string/label_delete_routine"
             android:layout_weight="1"/>
 
     </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:id="@+id/button_run_routine"
+        android:text="@string/label_run"
+        android:theme="@style/ButtonStyle"
+        android:textColor="@color/colorTeal"
+        android:contentDescription="@string/label_run"
+        android:layout_weight="1"/>
 
 </LinearLayout>

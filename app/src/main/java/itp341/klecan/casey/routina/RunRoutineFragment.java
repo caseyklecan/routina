@@ -161,9 +161,12 @@ public class RunRoutineFragment extends Fragment {
             public void onTick(long millis) {
                 long minutes = millis / 1000 / 60;
                 long seconds = millis / 1000 % 60;
-                String rem = "Time remaining:\n" + String.valueOf(minutes) + ":" + String.valueOf(seconds);
+                String second = String.valueOf(seconds);
+                if (seconds < 10) {
+                    second = "0" + second;
+                }
+                String rem = "Time remaining:\n" + String.valueOf(minutes) + ":" + second;
                 textDialogue.setText(rem);
-                ((MainActivity) getActivity()).sendNotification("Time is up!", "Time to get moving onto the next task.");
             }
 
             /*
@@ -173,12 +176,16 @@ public class RunRoutineFragment extends Fragment {
             public void onFinish() {
                 finishedEarly = false;
                 imageCat.setImageResource(R.drawable.cat_stressed);
+                String rem = "Time remaining:\n0:00";
+                textDialogue.setText(rem);
                 buttonSnooze.setEnabled(true);
-                ((MainActivity) getActivity()).sendNotification("SNOOZE Time is up!", "Time to get moving onto the next task, right now!");
+                buttonSnooze.setTextColor(getResources().getColor(R.color.colorTeal, null));
+                ((MainActivity) getActivity()).sendNotification("Time is up!", "Time to get moving onto the next task.");
             }
         }.start();
         finishedEarly = true;
         buttonSnooze.setEnabled(false);
+        buttonSnooze.setTextColor(getResources().getColor(R.color.colorGray, null));
     }
 
     /*
@@ -199,18 +206,24 @@ public class RunRoutineFragment extends Fragment {
         snoozeCount++;
         long millis = TimeUnit.MINUTES.toMillis(Integer.valueOf(tasks.get(currentIndex).getSnooze()));
         buttonSnooze.setEnabled(false);
+        buttonSnooze.setTextColor(getResources().getColor(R.color.colorGray, null));
+
         timer = new CountDownTimer(millis, 1000) {
             public void onTick(long millis) {
                 long minutes = millis / 1000 / 60;
                 long seconds = millis / 1000 % 60;
-                String rem = "Time remaining:\n" + String.valueOf(minutes) + ":" + String.valueOf(seconds);
+                String second = String.valueOf(seconds);
+                if (seconds < 10) {
+                    second = "0" + second;
+                }
+                String rem = "Time remaining:\n" + String.valueOf(minutes) + ":" + second;
                 textDialogue.setText(rem);
             }
 
             public void onFinish() {
                 imageCat.setImageResource(R.drawable.cat_stressed);
                 textDialogue.setText(getResources().getString(R.string.label_out_of_time));
-                ((MainActivity) getActivity()).sendNotification("Time is up!", "Time to get moving onto the next task.");
+                ((MainActivity) getActivity()).sendNotification("SNOOZE Time is up!", "Time to get moving onto the next task, right now!");
             }
         }.start();
     }

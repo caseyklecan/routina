@@ -10,6 +10,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import itp341.klecan.casey.routina.model.Task;
 
@@ -79,9 +80,19 @@ public class AddTaskDialog extends DialogFragment {
                             @Override
                             public void onClick(DialogInterface dialog,
                                                 int which) {
-                                task.setName(name.getText().toString());
-                                task.setTime(time.getText().toString());
-                                task.setSnooze(snooze.getText().toString());
+                                String textName = name.getText().toString();
+                                String textTime = time.getText().toString();
+                                String textSnooze = snooze.getText().toString();
+                                if (textName.isEmpty() || textTime.isEmpty() || textSnooze.isEmpty()) {
+                                    Toast.makeText(getActivity(), "Invalid input. Please fill out all fields and try again.", Toast.LENGTH_LONG).show();
+                                    MyDialogCallback host = (MyDialogCallback) getTargetFragment();
+                                    host.deleteTask(task);
+                                    return;
+                                }
+
+                                task.setName(textName);
+                                task.setTime(textTime);
+                                task.setSnooze(textSnooze);
 
                                 MyDialogCallback host = (MyDialogCallback) getTargetFragment();
                                 host.saveTask(task);

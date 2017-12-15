@@ -79,8 +79,8 @@ public class FinishRoutineFragment extends Fragment {
                     Task t = child.getValue(Task.class);
                     tasks.add(t);
                 }
-                int random = new Random().nextInt(2);
-                if (random == 0) processRoutine();
+                int random = new Random().nextInt();
+                if (random % 2 == 0) processRoutine();
                 else processTasks();
             }
 

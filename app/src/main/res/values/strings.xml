@@ -3,10 +3,11 @@
     <string name="tag_line">with a little guidance from me, you\'ll have your routines down in no time!</string>
 
     <string name="label_list">My Routines</string>
-    <string name="label_edit">Edit</string>
+    <string name="label_edit">Edit Routine/Tasks</string>
     <string name="label_delete">Delete</string>
+    <string name="label_delete_routine">Delete Routine</string>
     <string name="label_add">+</string>
-    <string name="label_run">Start</string>
+    <string name="label_run">Start Routine</string>
 
     <string name="label_create_routine">Create Routine</string>
     <string name="label_save">Save</string>
